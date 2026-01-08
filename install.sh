@@ -9,6 +9,22 @@ DEST_DIR="$HOME/.local/bin"
 # Create the destination directory if it does not exist
 mkdir -p "$DEST_DIR"
 
+# Backup existing scripts if they exist
+BACKUP_DIR="$DEST_DIR/.worktrees-scripts-backup/$(date +%Y%m%d_%H%M%S)"
+BACKUP_MADE=false
+for script in "${SCRIPTS[@]}"; do
+  if [[ -f "$DEST_DIR/$script" ]]; then
+    if [[ "$BACKUP_MADE" == false ]]; then
+      mkdir -p "$BACKUP_DIR"
+      BACKUP_MADE=true
+    fi
+    cp "$DEST_DIR/$script" "$BACKUP_DIR/"
+  fi
+done
+if [[ "$BACKUP_MADE" == true ]]; then
+  echo "Existing scripts backed up to: $BACKUP_DIR"
+fi
+
 # Clone the repository into a temporary directory
 TEMP_DIR=$(mktemp -d)
 git clone "$REPO_URL" "$TEMP_DIR"
