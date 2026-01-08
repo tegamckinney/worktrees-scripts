@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 # Define scripts to work with
-SCRIPTS=("wtadd.sh" "wtremove.sh" "wtclone.sh" "wtlist.sh")
+SCRIPTS=("wtadd.sh" "wtremove.sh" "wtclone.sh" "wtlist.sh" "wtsync.sh")
 
 # Define the repository URL and the destination directory
 REPO_URL="https://github.com/tomups/worktrees-scripts.git"
