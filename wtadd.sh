@@ -67,10 +67,10 @@ function cp_cow {
 # Detect which find variant is available by testing capabilities
 function detect_find_variant {
     # Test for BSD find (supports -E flag)
-    if find -E /dev/null -maxdepth 0 2>/dev/null; then
+    if find -E /dev/null -maxdepth 0 >/dev/null 2>&1; then
         echo "bsd"
     # Test for GNU find (supports --regextype)
-    elif find /dev/null -maxdepth 0 -regextype posix-extended 2>/dev/null; then
+    elif find /dev/null -maxdepth 0 -regextype posix-extended >/dev/null 2>&1; then
         echo "gnu"
     else
         echo "basic"
