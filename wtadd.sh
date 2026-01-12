@@ -111,12 +111,15 @@ function _worktree {
     # enough :shrug:
     #
     # if the branch exists locally:
+    existing_branch=false
     if git for-each-ref --format='%(refname:lstrip=2)' refs/heads | grep -E "^$branchname$" > /dev/null 2>&1; then
+        existing_branch=true
         if ! git worktree add "$parent_dir/$dirname" "$branchname"; then
             die "failed to create git worktree $branchname"
         fi
     # if the branch exists on a remote:
     elif git for-each-ref --format='%(refname:lstrip=3)' refs/remotes/origin | grep -E "^$branchname$" > /dev/null 2>&1; then
+        existing_branch=true
         if ! git worktree add "$parent_dir/$dirname" "$branchname"; then
             die "failed to create git worktree $branchname"
         fi
@@ -186,11 +189,12 @@ function _worktree {
     # return the shell to normal splitting mode
     unset IFS
 
-    # pull the most recent version of the remote
+    # pull the most recent version of the remote (only for existing branches)
     # ensure any inherited bare-repo env (GIT_DIR/GIT_WORK_TREE) doesn't leak into this call
-    # silence stdout/stderr from git; only show our warning on failure
-    if ! env -u GIT_DIR -u GIT_WORK_TREE git -C "$parent_dir/$dirname" pull >/dev/null 2>&1; then
-        warn "Unable to run git pull, there may not be an upstream"
+    if $existing_branch; then
+        if ! env -u GIT_DIR -u GIT_WORK_TREE git -C "$parent_dir/$dirname" pull >/dev/null 2>&1; then
+            warn "Unable to run git pull, there may not be an upstream"
+        fi
     fi
 
     # if there was an envrc file, tell direnv that it's ok to run it
